@@ -28,16 +28,13 @@ jobs:
   release:
     name: create-release
     runs-on: ubuntu-latest
+    container:
+      image: alpine/helm
     steps:
       - uses: actions/checkout@v2
-      - name: install-helm
-        run: |
-          wget https://get.helm.sh/helm-v3.5.0-linux-amd64.tar.gz -O /tmp/helm-v3.5.0-linux-amd64.tar.gz
-          mkdir /tmp/bin -p; tar xzf /tmp/helm-v3.5.0-linux-amd64.tar.gz -C /tmp/bin --strip-components=1;
-          PATH=/tmp/bin:$PATH
       - name: build-chart
         working-directory: charts/log-router
-        run: make
+        run: helm package .
       - name: create-release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags')
